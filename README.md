@@ -2,7 +2,7 @@
 
 Ứng dụng lập kế hoạch luồng xe nhập khẩu — theo dõi hành trình xe từ lúc **nhập về → bãi tạm → đăng ký → depot**, kèm tính toán chi phí lưu bãi theo từng tháng.
 
-**🌐 Dùng thử:** https://nguyenhieutrung2101.github.io/car-flow-planner/
+**🌐 Dùng thử:** https://car-flow-planner.nguyenhieutrung2101.workers.dev
 
 Toàn bộ ứng dụng nằm trong **một file `index.html` duy nhất** — không cần cài đặt, không cần server, không phụ thuộc thư viện ngoài. Mở file bằng trình duyệt là chạy.
 
