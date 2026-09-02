@@ -2,7 +2,7 @@
 import { STEPS, STEP_LBL, mLabel, effCap, occupancy, tpAllocated, dpAllocated, batchAutoDone, loc, bat } from './model.js';
 import { costsByMonth } from './cost.js';
 
-export function download(blob, name) {
+function download(blob, name) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = name;

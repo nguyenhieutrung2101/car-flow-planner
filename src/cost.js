@@ -1,8 +1,8 @@
 /* Cost engine — port nguyên logic tính chi phí theo tháng. */
 
-export const toIDR = (s, amt, cur) => (cur === 'USD' ? amt * s.fxRate : amt);
+const toIDR = (s, amt, cur) => (cur === 'USD' ? amt * s.fxRate : amt);
 export const defName = (s, d) => (typeof d.name === 'object' ? (d.name[s.lang] || d.name.vi) : d.name);
-export const locDefs = (s, l) => s.costDefs.filter(d => d.scope === l.type || d.scope === 'both');
+const locDefs = (s, l) => s.costDefs.filter(d => d.scope === l.type || d.scope === 'both');
 
 export function costsByMonth(s, l, t) {
   const NM = s.numMonths;

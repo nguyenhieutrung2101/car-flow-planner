@@ -9,7 +9,7 @@ export const STEP_LBL = { quota: 'Taxi Quota', tera: 'TERA', kir: 'KIR', kp: 'KP
 
 export const uid = () => Math.random().toString(36).slice(2, 9);
 
-export function defaultCostDefs() {
+function defaultCostDefs() {
   return [
     { id: 'd_land_tp', scope: 'tp', basis: 'per_m2_month', amount: 49950, currency: 'IDR', timing: 'prepaid', name: { vi: 'Thuê đất', en: 'Land lease' } },
     { id: 'd_opex_tp', scope: 'tp', basis: 'monthly', amount: 260717529, currency: 'IDR', timing: 'monthly', name: { vi: 'Vận hành hàng tháng', en: 'Monthly operations' } },
@@ -62,7 +62,7 @@ export function migrate(s) {
 }
 
 /* ===== month / date helpers ===== */
-export function baseYM(s) { const [y, m] = s.startMonth.split('-').map(Number); return y * 12 + (m - 1); }
+function baseYM(s) { const [y, m] = s.startMonth.split('-').map(Number); return y * 12 + (m - 1); }
 export function mLabel(s, i, withYear = true) {
   const tot = baseYM(s) + i, yy = Math.floor(tot / 12), mm = tot % 12 + 1;
   return withYear ? `T${mm}/${String(yy).slice(2)}` : `T${mm}`;

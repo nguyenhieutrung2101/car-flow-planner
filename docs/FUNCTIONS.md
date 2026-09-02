@@ -1,6 +1,6 @@
 # Function & Component Inventory
 
-Generated from a full read of the source tree at commit `6c1df89`.
+Generated from a full read of the source tree (React refactor commit `6c1df89`, line numbers updated after the dead-code cleanup that followed it).
 
 **Scope:** all first-party source files.
 **Excluded:** `node_modules/`, `dist/`, `package-lock.json`, and `public/legacy.html` (the frozen v1 single-file app — a complete snapshot of the pre-React implementation, kept only as a deployable fallback at `/legacy.html`; its ~100 internal functions are not part of the React app and are not inventoried here). There are no test files or third-party vendored sources in the repo.
@@ -52,9 +52,9 @@ No function definitions. Top-level side effect: `createRoot(document.getElementB
 
 ### `I18N` — line 3 [PUBLIC]
 Data constant, not a function: `{ vi: {...}, en: {...} }`. Contains 11 parameterized **message-builder functions per language** (22 total), all pure string builders returning HTML/text:
-`w_remain(c)`, `w_over(c)`, `w_dp_over(a, b)`, `w_early(l, m1, m2)`, `w_dwell(l, n, r)`, `l_invest_hint(s)`, `confirm_del_loc(n)`, `d_alloc(b, l)`, `d_direct(b, l)`, `d_move(l)`, `confirm_del_card(n, q)` (vi: lines 22–26, 40, 46, 57, 59, 75; en: lines 84–88, 100, 105, 116, 118, 124).
+`w_remain(c)`, `w_over(c)`, `w_dp_over(a, b)`, `w_early(l, m1, m2)`, `w_dwell(l, n, r)`, `l_invest_hint(s)`, `confirm_del_loc(n)`, `d_alloc(b, l)`, `d_direct(b, l)`, `d_move(l)`, `confirm_del_card(n, q)` (vi: lines 19–22, 33, 35, 40, 60; en: lines 78–81, 92, 94, 99, 119).
 
-### `makeT(lang)` — line 126 [PUBLIC]
+### `makeT(lang)` — line 124 [PUBLIC]
 - Signature: `(lang: 'vi'|'en') => (k: string) => string | Function`
 - Purpose: builds the translator `t`; falls back en→vi→raw key.
 - Calls: none. Called by: `App` (memoized as `t`), and transitively by nearly every component.
@@ -67,10 +67,10 @@ Data constants [PUBLIC]: `PALETTE` (line 4), `VEHICLES` (6), `STEPS` (7), `STEP_
 | Function | Line | Signature | Purpose | Calls / Called by | Side effects |
 | --- | --- | --- | --- | --- | --- |
 | `uid()` [PUBLIC] | 10 | `() => string` | Random 7-char id for batches/locations/cards. | — / App (`splitCard`, `handleDrop`), BatchModal, LocModal, CostDefsModal | pure (nondeterministic) |
-| `defaultCostDefs()` [PUBLIC] | 12 | `() => CostDef[]` | Standard cost-definition seed rows. | — / `defaultState`, `migrate` | pure |
+| `defaultCostDefs()` | 12 | `() => CostDef[]` | Standard cost-definition seed rows. | — / `defaultState`, `migrate` | pure |
 | `defaultState()` [PUBLIC] | 22 | `() => State` | Full demo state (5 locations, 2 batches, 5 cards). | `defaultCostDefs` / App initial `useState` | pure |
 | `migrate(s)` [PUBLIC] | 48 | `(s: State) => State` | Backfills missing fields on loaded/older state; recomputes `importMonth` from `importDate`. | `defaultCostDefs`, `monthToDate`, `dateToMonth` / App (init + `loadJSON`) | **mutates its argument** (returned) |
-| `baseYM(s)` [PUBLIC] | 65 | `(s: State) => number` | `startMonth` as absolute month count (y×12+m). | — / `mLabel`, `monthToDate`, `dateToMonth` | pure |
+| `baseYM(s)` | 65 | `(s: State) => number` | `startMonth` as absolute month count (y×12+m). | — / `mLabel`, `monthToDate`, `dateToMonth` | pure |
 | `mLabel(s, i, withYear?)` [PUBLIC] | 66 | `(s, i: number, withYear = true) => string` | Month index → label `T7/26` or `T7`. | `baseYM` / BoardTab, Panel, CostTab, LocModal, App (`handleDrop`), `exportExcel` | pure |
 | `monthToDate(s, i)` [PUBLIC] | 70 | `(s, i: number) => string` | Month index → ISO date `YYYY-MM-01`. | `baseYM` / `migrate`, BatchModal | pure |
 | `dateToMonth(s, d)` [PUBLIC] | 71 | `(s, d: string) => number` | ISO date → clamped month index on the timeline. | `baseYM` / `migrate`, BatchModal, SettingsModal | pure |
@@ -92,16 +92,16 @@ Data constants [PUBLIC]: `PALETTE` (line 4), `VEHICLES` (6), `STEPS` (7), `STEP_
 
 | Function | Line | Signature | Purpose | Calls / Called by | Side effects |
 | --- | --- | --- | --- | --- | --- |
-| `toIDR(s, amt, cur)` [PUBLIC] | 3 | `(s, amt: number, cur: 'IDR'\|'USD') => number` | Convert USD→IDR by `s.fxRate`; IDR passes through. | — / `costsByMonth` (only) | pure |
+| `toIDR(s, amt, cur)` | 3 | `(s, amt: number, cur: 'IDR'\|'USD') => number` | Convert USD→IDR by `s.fxRate`; IDR passes through. | — / `costsByMonth` (only) | pure |
 | `defName(s, d)` [PUBLIC] | 4 | `(s, d: CostDef) => string` | Localized name of a cost definition. | — / `costsByMonth`, LocModal | pure |
-| `locDefs(s, l)` [PUBLIC] | 5 | `(s, l: Location) => CostDef[]` | Cost defs applying to a location (its type or `both`). | — / `costsByMonth` (only) | pure |
+| `locDefs(s, l)` | 5 | `(s, l: Location) => CostDef[]` | Cost defs applying to a location (its type or `both`). | — / `costsByMonth` (only) | pure |
 | `costsByMonth(s, l, t)` [PUBLIC] | 7 | `(s, l: Location, t: translator) => { tot: number, items: {label, amt, cur}[] }[]` | Per-month cost cells: land per-m² (prepaid or monthly), monthly opex, one-time items with pay-month override, depot construction (`investRate × slots` at lease start). Honors per-location overrides (`off`, `amount`, `payMonth`). | inner `push(m, label, amt, cur)` (line 10), `locDefs`, `defName`, `toIDR` / CostTab, `exportExcel` | pure |
 
 ## 6. `src/exportio.js`
 
 | Function | Line | Signature | Purpose | Calls / Called by | Side effects |
 | --- | --- | --- | --- | --- | --- |
-| `download(blob, name)` [PUBLIC] | 5 | `(blob: Blob, name: string) => void` | Trigger a browser file download via a temporary `<a>` + object URL. | — / `saveJSON`, `exportExcel` | **DOM manipulation, starts a download**, revokes URL after 2 s |
+| `download(blob, name)` | 5 | `(blob: Blob, name: string) => void` | Trigger a browser file download via a temporary `<a>` + object URL. | — / `saveJSON`, `exportExcel` | **DOM manipulation, starts a download**, revokes URL after 2 s |
 | `saveJSON(state)` [PUBLIC] | 13 | `(state: State) => void` | Serialize state to pretty JSON and download as `car_flow_plan.json`. | `download` / Toolbar (via ctx `saveJSON`) | download side effect |
 | `exportExcel(s, t)` [PUBLIC] | 18 | `(s: State, t: translator) => void` | Build a 6-sheet SpreadsheetML workbook (Locations, Batches, Allocations, Occupancy, Cost TP, Cost Depot) and download `car_flow_plan.xls`. | inner helpers `xEsc`, `cS`, `cSH`, `cN`, `row` (lines 20–24), `costSheet(type)` (58), `ws(name, rows)` (73); model: `mLabel`, `effCap`, `occupancy`, `tpAllocated`, `dpAllocated`, `batchAutoDone`, `loc`, `bat`, `STEPS`, `STEP_LBL`; cost: `costsByMonth` / Toolbar (via ctx `exportExcel`) | download side effect |
 
@@ -270,8 +270,10 @@ Constants `W`, `OFFS` (lines 5–6).
 
 Everything above was read in full; no file was truncated (largest source file is `BoardTab.jsx`, 196 lines).
 
-## 23. Dead / unused code noticed
+## 23. Dead code — cleaned up
 
-- i18n keys with no references in `src/`: `hint_board`, `c_landdp`, `df_del` (all three were already unused in the v1 app and were ported for parity).
-- `src/components/BoardTab.jsx:33` — `selCard` is destructured from `useApp()` in `Card` but never used.
-- Unused **exports** (live functions, but only referenced within their own module, so the `export` keyword does nothing): `toIDR`, `locDefs` (`src/cost.js`), `baseYM`, `defaultCostDefs` (`src/model.js`), `download` (`src/exportio.js`).
+The initial scan found the items below; all were removed in the follow-up cleanup commit, so the inventory above reflects the cleaned state.
+
+- i18n keys with no references in `src/`: `hint_board`, `c_landdp`, `df_del` — **deleted** from both languages.
+- `src/components/BoardTab.jsx` `Card` destructured `selCard` from `useApp()` without using it — **removed**.
+- `export` keyword dropped from functions only referenced inside their own module: `toIDR`, `locDefs` (`src/cost.js`), `baseYM`, `defaultCostDefs` (`src/model.js`), `download` (`src/exportio.js`) — they are now module-private (no longer marked [PUBLIC] above).

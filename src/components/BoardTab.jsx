@@ -30,7 +30,7 @@ function Cell({ rowId, month, height, extraClass, children }) {
 }
 
 function Card({ card, lane, imp }) {
-  const { state, t, selBatch, selCard, selectCard } = useApp();
+  const { state, t, selBatch, selectCard } = useApp();
   const b = bat(state, card.batchId);
   if (!b) return null;
   const cls = ['card'];
